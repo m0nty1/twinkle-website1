@@ -8,7 +8,7 @@ import { ArrowRight, Gem, Truck, ShieldCheck, Star } from 'lucide-react';
 import { ProductImage } from '../components/ProductImage';
 
 export default function Home() {
-  const { t } = useAppContext();
+  const { t, isRTL } = useAppContext();
   const [featured, setFeatured] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -21,12 +21,13 @@ export default function Home() {
       <section className="relative min-h-[90vh] w-full flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-cream via-sand-50 to-champagne-100 opacity-60"></div>
         <div className="max-w-7xl mx-auto px-4 w-full relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="text-center md:text-start order-2 md:order-1">
+          <div className="text-center md:text-start rtl:md:text-right order-2 md:order-1">
             <span className="inline-block mb-4 text-xs font-bold tracking-[0.3em] text-champagne-500 uppercase">New Collection</span>
             <h1 className="text-5xl md:text-7xl font-serif font-medium text-charcoal-900 mb-6">{t.heroTitle}</h1>
             <p className="text-charcoal-600 text-lg font-light mb-10">{t.heroSubtitle}</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start rtl:md:justify-end">
               <Link href="/shop" className="px-10 py-4 bg-charcoal-900 text-cream text-xs font-bold uppercase tracking-[0.2em] rounded-sm">{t.shop}</Link>
+              <Link href="/shop?cat=perfume" className="px-10 py-4 border border-charcoal-900 text-charcoal-900 text-xs font-bold uppercase tracking-[0.2em] rounded-sm">{t.perfumes}</Link>
             </div>
           </div>
           <div className="order-1 md:order-2 flex justify-center md:justify-end relative">
@@ -53,6 +54,20 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <div className="py-20 px-4 max-w-7xl mx-auto text-center">
+        <div className="mb-10">
+           <h2 className="text-2xl font-serif text-charcoal-900 italic">@TwinkleEgypt</h2>
+           <p className="text-xs text-charcoal-500 uppercase tracking-widest mt-2">Join our world of softness</p>
+        </div>
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+           {[101, 102, 103, 104, 105, 106].map(id => (
+             <div key={id} className="aspect-square bg-sand-50 overflow-hidden relative group cursor-pointer">
+               <img src={`https://picsum.photos/id/${id}/400/400`} alt="Insta" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition" />
+             </div>
+           ))}
+        </div>
+      </div>
     </div>
   );
 }

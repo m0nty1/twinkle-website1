@@ -83,7 +83,12 @@ export const ChatWindow: React.FC<{ onClose?: () => void, isFullPage?: boolean }
       <div className="bg-sand-100 p-4 flex justify-between items-center border-b border-sand-200">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-champagne-100 flex items-center justify-center border border-white shadow-sm"><Sparkles size={18} className="text-champagne-500" /></div>
-          <div><h3 className="font-serif-title font-bold text-charcoal-900">Twinkle AI</h3></div>
+          <div>
+            <h3 className="font-serif font-bold text-charcoal-900">Twinkle AI</h3>
+            <span className="text-[10px] uppercase tracking-widest text-green-600 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Online
+            </span>
+          </div>
         </div>
         {onClose && <button onClick={onClose}><X size={20} /></button>}
       </div>
