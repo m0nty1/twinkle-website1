@@ -4,97 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Twinkle | Perfumes & Accessories</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              // Soft Luxury Palette
-              cream: '#FDFCF8',
-              sand: {
-                50: '#FAF9F6',
-                100: '#F5F0EB', // Warm Beige
-                200: '#EBE5DE',
-                300: '#DMD4CC',
-              },
-              champagne: {
-                100: '#F4EBD9',
-                200: '#EADBC0',
-                300: '#DEC5A0',
-                400: '#D4B88C', // Soft Gold
-                500: '#C5A059', // Antique Gold
-              },
-              // Replacing harsh black with Warm Charcoal/Espresso
-              charcoal: {
-                900: '#2C2825', 
-                800: '#4A423D',
-                600: '#756A62'
-              }
-            },
-            fontFamily: {
-              sans: ['Inter', 'Cairo', 'sans-serif'],
-              serif: ['Playfair Display', 'serif'],
-              arabic: ['Cairo', 'sans-serif'],
-            },
-            backgroundImage: {
-              'soft-glow': 'radial-gradient(circle at 50% 50%, #FDFCF8 0%, #F5F0EB 100%)',
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-      body {
-        font-family: 'Inter', 'Cairo', sans-serif;
-        background-color: #FDFCF8;
-        color: #2C2825;
-      }
-      .font-serif-title {
-        font-family: 'Playfair Display', serif;
-      }
-      /* Arch Utilities */
-      .arch-t {
-        border-top-left-radius: 50% 10rem;
-        border-top-right-radius: 50% 10rem;
-      }
-      .arch-full {
-        border-radius: 10rem 10rem 0 0;
-      }
-      
-      /* Custom Scrollbar for Admin */
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #FAF9F6; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #D4B88C; 
-        border-radius: 4px;
-      }
-    </style>
   <script type="importmap">
 {
   "imports": {
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "path": "https://esm.sh/path@^0.12.7",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
     "react-router-dom": "https://esm.sh/react-router-dom@^7.10.1",
     "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
     "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
-    "recharts": "https://esm.sh/recharts@^3.5.1",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "url": "https://esm.sh/url@^0.11.4",
     "next/": "https://esm.sh/next@^16.0.10/",
     "next": "https://esm.sh/next@^16.0.10",
-    "tailwindcss": "https://esm.sh/tailwindcss@^4.1.18",
-    "@google/genai": "https://esm.sh/@google/genai@^1.33.0"
+    "tailwindcss": "https://esm.sh/tailwindcss@^4.1.18"
   }
 }
 </script>
 </head>
   <body class="bg-cream text-charcoal-900 antialiased selection:bg-champagne-200 selection:text-charcoal-900">
     <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>

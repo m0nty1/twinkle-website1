@@ -1,11 +1,10 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { TRANSLATIONS } from './lib/constants';
 import { Language, CartItem, Product, User } from './lib/types';
 import Layout from './components/Layout';
 
-// Fix imports to match the src/app structure provided in existing files
+// Pages
 import Home from './app/page';
 import Shop from './app/shop/page';
 import ProductDetails from './app/product/[id]/page';
@@ -94,7 +93,7 @@ const App: React.FC = () => {
       user, setUser, 
       t, isRTL 
     }}>
-      <HashRouter>
+      <BrowserRouter>
         <ScrollToTop />
         <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'font-arabic' : 'font-sans'}>
           <Routes>
@@ -115,7 +114,7 @@ const App: React.FC = () => {
             </Route>
           </Routes>
         </div>
-      </HashRouter>
+      </BrowserRouter>
     </AppContext.Provider>
   );
 };
