@@ -1,105 +1,89 @@
 "use client";
-import Link from 'next/link';
+import { Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { ShoppingBag, Menu, X, User, LogOut, Heart } from 'lucide-react';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { ShoppingBag, Menu, X, User, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
 export const Navbar: React.FC = () => {
-  const { t, toggleLanguage, cart, user, setUser } = useAppContext();
+  const { t, toggleLanguage, cart } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const router = useRouter();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-  const handleLogout = () => { setUser(null); router.push('/'); };
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Determine if we are on home page for transparency
+  const isHome = location.pathname === '/';
+  
+  const navClass = `fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+    isScrolled || !isHome || isMenuOpen ? 'bg-white text-primary shadow-sm py-4' : 'bg-transparent text-primary py-6'
+  }`;
 
   return (
-    <>
-      <div className="bg-sand-100 text-charcoal-800 py-2 text-center text-[11px] uppercase tracking-[0.2em] font-medium border-b border-sand-200">
-        Free Shipping on Orders over 1500 EGP
-      </div>
-      <nav className="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-sand-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-20 items-center">
-            
-            <div className="flex items-center md:hidden">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-charcoal-800 hover:text-champagne-500 transition">
-                {isMenuOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
-              </button>
+    <nav className={navClass}>
+      <div className="max-w-[1920px] mx-auto px-6 md:px-12">
+        <div className="flex justify-between items-center">
+          
+          {/* Left: Mobile Menu / Desktop Links */}
+          <div className="flex items-center flex-1">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden p-2 -ml-2">
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <div className="hidden lg:flex gap-8 text-xs font-bold uppercase tracking-[0.15em]">
+              <Link to="/shop?cat=PERFUME" className="hover:text-accent transition-colors">Perfumes</Link>
+              <Link to="/accessories" className="hover:text-accent transition-colors">Accessories</Link>
+              <Link to="/shop" className="hover:text-accent transition-colors">Collections</Link>
             </div>
+          </div>
 
-            <div className="flex-shrink-0 flex items-center justify-center flex-1 md:flex-none">
-              <Link href="/" className="flex flex-col items-center group">
-                <span className="text-3xl font-serif font-normal text-charcoal-900 tracking-[0.15em] group-hover:text-champagne-500 transition duration-300">
-                  TWINKLE
+          {/* Center: Logo */}
+          <div className="flex-1 flex justify-center">
+            <Link to="/" className="text-3xl font-serif tracking-[0.1em] font-bold">
+              TWINKLE
+            </Link>
+          </div>
+
+          {/* Right: Icons */}
+          <div className="flex items-center justify-end flex-1 gap-4 md:gap-6">
+            <button onClick={toggleLanguage} className="hidden md:block text-xs font-bold uppercase hover:text-accent">
+              {t.language}
+            </button>
+            <Link to="/ai-chat" className="hidden md:block text-xs font-bold uppercase hover:text-accent border-b border-transparent hover:border-accent">
+              AI Advisor
+            </Link>
+            <Link to="/admin" className="p-1 hover:text-accent"><User size={20} strokeWidth={1.5}/></Link>
+            <Link to="/cart" className="p-1 hover:text-accent relative">
+              <ShoppingBag size={20} strokeWidth={1.5}/>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-bold text-white bg-accent rounded-full">
+                  {cartCount}
                 </span>
-                <span className="text-[0.6rem] uppercase tracking-[0.3em] text-charcoal-600">Perfume & Co</span>
-              </Link>
-            </div>
-
-            <div className="hidden md:flex space-x-10 rtl:space-x-reverse items-center justify-center flex-1">
-              <Link href="/" className="text-charcoal-600 hover:text-champagne-500 uppercase text-[11px] tracking-[0.15em] font-medium transition duration-300">{t.home}</Link>
-              <Link href="/shop" className="text-charcoal-600 hover:text-champagne-500 uppercase text-[11px] tracking-[0.15em] font-medium transition duration-300">{t.shop}</Link>
-              <Link href="/shop?cat=perfume" className="text-charcoal-600 hover:text-champagne-500 uppercase text-[11px] tracking-[0.15em] font-medium transition duration-300">{t.perfumes}</Link>
-              <Link href="/ai-chat" className="text-charcoal-600 hover:text-champagne-500 uppercase text-[11px] tracking-[0.15em] font-medium transition duration-300 flex items-center gap-1">
-                 Twinkle AI
-              </Link>
-            </div>
-
-            <div className="flex items-center space-x-3 rtl:space-x-reverse">
-              <button 
-                onClick={toggleLanguage} 
-                className="text-xs font-serif text-charcoal-800 hover:text-champagne-500 px-2"
-              >
-                {t.language}
-              </button>
-              
-              {user ? (
-                 <div className="relative group">
-                   <button onClick={() => router.push('/admin')} className="p-2 text-charcoal-800 hover:text-champagne-500 transition">
-                     <User size={20} strokeWidth={1.5} />
-                   </button>
-                   <div className="absolute right-0 mt-4 w-48 bg-cream border border-sand-200 rounded-sm shadow-sm opacity-0 group-hover:opacity-100 transition-opacity invisible group-hover:visible z-50">
-                      <div className="px-4 py-3 text-xs text-charcoal-600 border-b border-sand-100 tracking-wide">Hi, {user.name}</div>
-                      <button onClick={handleLogout} className="w-full text-left px-4 py-3 text-xs text-red-500 hover:bg-sand-50 flex items-center gap-2 uppercase tracking-wide">
-                        <LogOut size={12}/> Logout
-                      </button>
-                   </div>
-                 </div>
-              ) : (
-                <Link href="/login" className="p-2 hidden md:block text-charcoal-800 hover:text-champagne-500 transition">
-                  <User size={20} strokeWidth={1.5} />
-                </Link>
               )}
-
-              <button className="p-2 hidden md:block text-charcoal-800 hover:text-champagne-500 transition">
-                 <Heart size={20} strokeWidth={1.5} />
-              </button>
-
-              <Link href="/cart" className="p-2 text-charcoal-800 hover:text-champagne-500 transition relative">
-                <ShoppingBag size={20} strokeWidth={1.5} />
-                {cartCount > 0 && (
-                  <span className="absolute top-1 right-0 inline-flex items-center justify-center w-4 h-4 text-[9px] font-bold leading-none text-white bg-champagne-400 rounded-full">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-            </div>
+            </Link>
           </div>
         </div>
+      </div>
 
-        {isMenuOpen && (
-          <div className="md:hidden bg-cream border-t border-sand-100 absolute w-full left-0 z-40 shadow-xl">
-            <div className="py-6 space-y-4 flex flex-col items-center">
-              <Link href="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-charcoal-800 hover:text-champagne-500 uppercase text-xs tracking-widest">{t.home}</Link>
-              <Link href="/shop" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-charcoal-800 hover:text-champagne-500 uppercase text-xs tracking-widest">{t.shop}</Link>
-              <Link href="/shop?cat=perfume" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-charcoal-800 hover:text-champagne-500 uppercase text-xs tracking-widest">{t.perfumes}</Link>
-              <Link href="/ai-chat" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-charcoal-800 hover:text-champagne-500 uppercase text-xs tracking-widest">Twinkle AI</Link>
-              {!user && <Link href="/login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-charcoal-800 hover:text-champagne-500 uppercase text-xs tracking-widest">Login</Link>}
-            </div>
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="absolute top-full left-0 w-full bg-white h-[calc(100vh-80px)] border-t border-zinc-100 p-8 flex flex-col gap-6 animate-fade-in lg:hidden">
+          <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-2xl font-serif">Home</Link>
+          <Link to="/shop" onClick={() => setIsMenuOpen(false)} className="text-2xl font-serif">Shop All</Link>
+          <Link to="/shop?cat=PERFUME" onClick={() => setIsMenuOpen(false)} className="text-2xl font-serif">Perfumes</Link>
+          <Link to="/accessories" onClick={() => setIsMenuOpen(false)} className="text-2xl font-serif">Accessories</Link>
+          <Link to="/ai-chat" onClick={() => setIsMenuOpen(false)} className="text-2xl font-serif text-accent">AI Advisor</Link>
+          <div className="mt-auto pt-8 border-t border-zinc-100 flex justify-between items-center text-sm text-zinc-500">
+             <button onClick={toggleLanguage}>{t.language}</button>
+             <Link to="/login">Admin Login</Link>
           </div>
-        )}
-      </nav>
-    </>
+        </div>
+      )}
+    </nav>
   );
 };

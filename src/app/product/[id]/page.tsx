@@ -1,23 +1,23 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 import { useAppContext } from '../../../context/AppContext';
 import { DataService } from '../../../services/dataService';
 import { Product } from '../../../lib/types';
 import { ProductImage } from '../../../components/ProductImage';
-import { Check } from 'lucide-react';
+import { Check, Info } from 'lucide-react';
 
 export default function ProductDetails() {
-  const params = useParams();
-  const id = params.id as string;
-  const { t, addToCart } = useAppContext();
+  const { id } = useParams<{ id: string }>();
+  const { addToCart } = useAppContext();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedImg, setSelectedImg] = useState(0);
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
     const products = DataService.getProducts();
-    setProduct(products.find(p => p.id === id) || null);
+    const found = products.find(p => p.id === id);
+    if (found) setProduct(found);
   }, [id]);
 
   const handleAdd = () => {
@@ -28,44 +28,71 @@ export default function ProductDetails() {
     }
   };
 
-  if (!product) return <div className="text-center py-20 bg-cream">Loading...</div>;
+  if (!product) return <div className="h-screen flex items-center justify-center">Loading...</div>;
 
   return (
-    <div className="bg-cream min-h-[80vh]">
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-          <div className="space-y-6">
-            <div className="aspect-[4/5] bg-sand-50 overflow-hidden rounded-t-[100px] shadow-sm relative">
-              <ProductImage src={product.images[selectedImg]} alt={product.title} className="w-full h-full" category={product.category} />
-            </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 justify-center">
-              {product.images.map((img, idx) => (
-                <button key={idx} onClick={() => setSelectedImg(idx)} className={`w-20 h-20 flex-shrink-0 border transition-all duration-300 rounded-sm overflow-hidden ${selectedImg === idx ? 'border-champagne-500 opacity-100' : 'border-transparent opacity-50 hover:opacity-100'}`}>
-                  <img src={img} className="w-full h-full object-cover" alt="thumbnail" />
+    <div className="pt-24 min-h-screen pb-24">
+       <div className="max-w-[1920px] mx-auto px-6 md:px-12">
+          <div className="flex flex-col lg:flex-row gap-16">
+             
+             {/* Left: Images (Sticky Grid) */}
+             <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4 h-fit">
+                <div className="col-span-1 md:col-span-2 aspect-[4/5] bg-zinc-100 overflow-hidden">
+                   <ProductImage 
+                     src={product.images[selectedImg]} 
+                     alt={product.title} 
+                     className="w-full h-full" 
+                     category={product.category}
+                     priority={true} // Priority loading for main view
+                   />
+                </div>
+                {/* Thumbnails if any */}
+                {product.images.map((img, idx) => (
+                   idx !== selectedImg && (
+                    <div key={idx} onClick={() => setSelectedImg(idx)} className="aspect-square bg-zinc-100 cursor-pointer overflow-hidden">
+                        <ProductImage src={img} alt="thumb" className="w-full h-full opacity-70 hover:opacity-100 transition" category={product.category} />
+                    </div>
+                   )
+                ))}
+             </div>
+
+             {/* Right: Details (Sticky) */}
+             <div className="lg:w-1/3 lg:sticky lg:top-32 h-fit space-y-10">
+                <div>
+                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-400 mb-4">{product.brand || 'Twinkle Exclusive'}</p>
+                   <h1 className="text-5xl font-serif text-primary mb-6 leading-tight">{product.title}</h1>
+                   <p className="text-3xl font-light text-zinc-800">{product.price} EGP</p>
+                </div>
+
+                <div className="prose prose-sm text-zinc-600 leading-relaxed">
+                   {product.description}
+                </div>
+
+                {/* Specs */}
+                <div className="grid grid-cols-2 gap-6 border-y border-zinc-200 py-6">
+                   {product.attributes?.size && (
+                      <div><span className="block text-xs uppercase text-zinc-400 mb-1">Size</span><span className="font-bold">{product.attributes.size}</span></div>
+                   )}
+                   {product.attributes?.concentration && (
+                      <div><span className="block text-xs uppercase text-zinc-400 mb-1">Type</span><span className="font-bold">{product.attributes.concentration}</span></div>
+                   )}
+                   {product.attributes?.notes && (
+                      <div className="col-span-2"><span className="block text-xs uppercase text-zinc-400 mb-1">Notes</span><span className="font-serif italic text-lg">{product.attributes.notes}</span></div>
+                   )}
+                </div>
+
+                <button 
+                  onClick={handleAdd}
+                  disabled={product.stock === 0}
+                  className={`w-full py-5 text-sm font-bold uppercase tracking-[0.2em] transition-all duration-300 ${
+                     product.stock === 0 ? 'bg-zinc-200 text-zinc-400' : 'bg-primary text-white hover:bg-accent'
+                  }`}
+                >
+                  {product.stock === 0 ? 'Out of Stock' : (added ? 'Added to Bag' : 'Add to Bag')}
                 </button>
-              ))}
-            </div>
+             </div>
           </div>
-          <div className="flex flex-col justify-center pt-8 md:pt-0">
-            <div className="mb-6">
-               <p className="text-xs text-champagne-500 font-bold uppercase tracking-[0.2em] mb-3">{product.brand || 'Twinkle Collection'}</p>
-               <h1 className="text-4xl md:text-5xl font-serif text-charcoal-900 mb-6 font-medium leading-tight">{product.title}</h1>
-               <p className="text-2xl font-light text-charcoal-600">{product.price} EGP</p>
-            </div>
-            <div className="w-12 h-px bg-sand-300 mb-8"></div>
-            <p className="text-charcoal-600 mb-10 leading-relaxed font-light text-sm max-w-md">{product.description}</p>
-            <div className="bg-sand-50 p-6 rounded-sm mb-10 border border-sand-100">
-              <div className="grid grid-cols-2 gap-y-6 gap-x-4 text-sm">
-                {product.attributes?.notes && <div><span className="text-xs uppercase tracking-widest text-charcoal-400 block mb-1">Notes</span><span className="text-charcoal-800 font-medium italic">{product.attributes.notes}</span></div>}
-                {product.attributes?.size && <div><span className="text-xs uppercase tracking-widest text-charcoal-400 block mb-1">Size</span><span className="text-charcoal-800 font-medium">{product.attributes.size}</span></div>}
-              </div>
-            </div>
-            <button disabled={product.stock === 0} onClick={handleAdd} className={`w-full max-w-sm py-4 text-xs uppercase tracking-[0.2em] font-bold transition-all duration-300 flex items-center justify-center gap-2 rounded-sm shadow-md ${product.stock > 0 ? 'bg-charcoal-900 text-cream hover:bg-champagne-500' : 'bg-sand-200 text-charcoal-400 cursor-not-allowed'}`}>
-               {product.stock === 0 ? t.outOfStock : (added ? <span className="flex items-center gap-2"><Check size={16}/> Added to Bag</span> : t.addToCart)}
-            </button>
-          </div>
-        </div>
-      </div>
+       </div>
     </div>
   );
 }

@@ -2,40 +2,36 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        cream: '#FDFCF8',
-        sand: {
-          50: '#FAF9F6',
-          100: '#F5F0EB',
-          200: '#EBE5DE',
-          300: '#DMD4CC',
-        },
-        champagne: {
-          100: '#F4EBD9',
-          200: '#EADBC0',
-          300: '#DEC5A0',
-          400: '#D4B88C',
-          500: '#C5A059',
-        },
-        charcoal: {
-          900: '#2C2825', 
-          800: '#4A423D',
-          600: '#756A62'
-        }
+        // Modern Luxury Palette
+        primary: '#18181b', // Zinc 900
+        secondary: '#52525b', // Zinc 600
+        accent: '#d97706', // Amber 600 (Bronze/Gold)
+        light: '#fafafa', // Zinc 50
+        surface: '#ffffff',
       },
       fontFamily: {
-        sans: ['Inter', 'Cairo', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
         serif: ['Playfair Display', 'serif'],
         arabic: ['Cairo', 'sans-serif'],
       },
-      backgroundImage: {
-        'soft-glow': 'radial-gradient(circle at 50% 50%, #FDFCF8 0%, #F5F0EB 100%)',
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.6s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        }
       }
     },
   },

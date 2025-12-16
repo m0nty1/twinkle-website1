@@ -25,7 +25,11 @@ export const useAppContext = () => {
   return context;
 };
 
-export const AppProvider = ({ children }: { children: React.ReactNode }) => {
+interface AppProviderProps {
+  children?: React.ReactNode;
+}
+
+export const AppProvider = ({ children }: AppProviderProps) => {
   const [language, setLanguage] = useState<Language>('en');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [user, setUser] = useState<User | null>(null);
@@ -58,7 +62,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const isRTL = language === 'ar';
   const t = TRANSLATIONS[language];
 
-  if (!mounted) return null; // Prevent hydration mismatch
+  if (!mounted) return null;
 
   return (
     <AppContext.Provider value={{ 

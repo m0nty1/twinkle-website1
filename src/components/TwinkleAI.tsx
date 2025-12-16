@@ -6,7 +6,7 @@ import { useAppContext } from '../context/AppContext';
 import { DataService } from '../services/dataService';
 import { AIService } from '../services/aiService';
 import { Product } from '../lib/types';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { ProductImage } from './ProductImage';
 
 interface Message {
@@ -18,7 +18,7 @@ interface Message {
 
 const useTwinkleChat = () => {
   const [messages, setMessages] = useState<Message[]>([
-    { id: 'welcome', role: 'model', text: 'Hello, beautiful! ✨ I am your personal Twinkle advisor. Looking for a new scent or a matching accessory today?' }
+    { id: 'welcome', role: 'model', text: 'Welcome to Twinkle. How may I assist you in finding your signature scent today?' }
   ]);
   const [loading, setLoading] = useState(false);
   const chatSession = useRef<any>(null);
@@ -48,7 +48,7 @@ const useTwinkleChat = () => {
       setMessages(prev => [...prev, botMsg]);
     } catch (error) {
       console.error(error);
-      setMessages(prev => [...prev, { id: Date.now().toString(), role: 'model', text: "I'm feeling a bit faint... could you please ask me that again?" }]);
+      setMessages(prev => [...prev, { id: Date.now().toString(), role: 'model', text: "Apologies, I was momentarily distracted. Could you repeat that?" }]);
     } finally {
       setLoading(false);
     }
@@ -57,16 +57,16 @@ const useTwinkleChat = () => {
 };
 
 const RecProductCard: React.FC<{ product: Product, onAdd: (p: Product, q: number) => void }> = ({ product, onAdd }) => (
-  <div className="flex gap-3 bg-white p-3 rounded-lg border border-sand-100 shadow-sm mt-3 w-full max-w-[280px]">
-    <div className="w-16 h-16 flex-shrink-0 rounded-md bg-gray-50 overflow-hidden">
+  <div className="flex gap-3 bg-zinc-50 p-2 rounded border border-zinc-200 mt-2">
+    <div className="w-12 h-12 flex-shrink-0 bg-white">
        <ProductImage src={product.images[0]} alt={product.title} category={product.category} />
     </div>
     <div className="flex-1 min-w-0">
-      <h4 className="text-xs font-bold text-charcoal-900 truncate">{product.title}</h4>
-      <p className="text-xs text-champagne-500 font-medium">{product.price} EGP</p>
-      <div className="flex gap-2 mt-2">
-        <Link href={`/product/${product.id}`} className="text-[10px] underline text-charcoal-500 hover:text-charcoal-900">View</Link>
-        <button onClick={() => onAdd(product, 1)} className="ml-auto text-[10px] bg-charcoal-900 text-cream px-2 py-1 rounded-sm hover:bg-champagne-500 transition">Add to Bag</button>
+      <h4 className="text-[10px] font-bold uppercase truncate">{product.title}</h4>
+      <p className="text-[10px] text-zinc-500">{product.price} EGP</p>
+      <div className="flex gap-2 mt-1">
+        <Link to={`/product/${product.id}`} className="text-[9px] underline text-zinc-500">View</Link>
+        <button onClick={() => onAdd(product, 1)} className="ml-auto text-[9px] bg-primary text-white px-2 py-0.5 rounded-sm">Add</button>
       </div>
     </div>
   </div>
@@ -79,35 +79,30 @@ export const ChatWindow: React.FC<{ onClose?: () => void, isFullPage?: boolean }
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
   return (
-    <div className={`flex flex-col bg-cream/95 backdrop-blur-sm overflow-hidden ${isFullPage ? 'h-full shadow-none' : 'h-[600px] w-[380px] rounded-2xl shadow-2xl border border-sand-200'}`}>
-      <div className="bg-sand-100 p-4 flex justify-between items-center border-b border-sand-200">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-champagne-100 flex items-center justify-center border border-white shadow-sm"><Sparkles size={18} className="text-champagne-500" /></div>
-          <div>
-            <h3 className="font-serif font-bold text-charcoal-900">Twinkle AI</h3>
-            <span className="text-[10px] uppercase tracking-widest text-green-600 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Online
-            </span>
-          </div>
+    <div className={`flex flex-col bg-white overflow-hidden ${isFullPage ? 'h-full shadow-none' : 'h-[500px] w-[350px] shadow-2xl border border-zinc-200'}`}>
+      <div className="bg-primary text-white p-4 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Sparkles size={14} className="text-accent" />
+          <h3 className="font-serif text-sm tracking-widest">TWINKLE AI</h3>
         </div>
-        {onClose && <button onClick={onClose}><X size={20} /></button>}
+        {onClose && <button onClick={onClose}><X size={16} /></button>}
       </div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-50">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-            <div className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-charcoal-800 text-cream rounded-2xl rounded-tr-none' : 'bg-white text-charcoal-800 rounded-2xl rounded-tl-none border border-sand-100'}`}>
+            <div className={`max-w-[90%] px-3 py-2 text-xs leading-relaxed ${msg.role === 'user' ? 'bg-zinc-200 text-primary' : 'bg-white border border-zinc-100 text-zinc-600'}`}>
               {msg.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
             </div>
             {msg.recommendations && msg.recommendations.map(prod => <RecProductCard key={prod.id} product={prod} onAdd={addToCart} />)}
           </div>
         ))}
-        {loading && <div className="p-2"><Loader2 className="animate-spin text-champagne-500"/></div>}
+        {loading && <div className="p-2 text-zinc-400"><Loader2 size={16} className="animate-spin"/></div>}
         <div ref={bottomRef} />
       </div>
-      <div className="p-4 bg-white border-t border-sand-100">
+      <div className="p-3 bg-white border-t border-zinc-100">
         <form onSubmit={(e) => { e.preventDefault(); sendMessage(input); setInput(''); }} className="flex gap-2">
-          <input type="text" className="flex-1 bg-sand-50 rounded-full px-4 py-3 text-sm focus:outline-none" placeholder="Ask about perfumes..." value={input} onChange={(e) => setInput(e.target.value)} />
-          <button type="submit" disabled={!input.trim() || loading} className="p-3 bg-champagne-400 text-white rounded-full"><Send size={18} /></button>
+          <input type="text" className="flex-1 bg-transparent border-b border-zinc-200 text-sm focus:border-accent focus:outline-none py-2" placeholder="Ask me anything..." value={input} onChange={(e) => setInput(e.target.value)} />
+          <button type="submit" disabled={!input.trim() || loading} className="p-2 text-primary hover:text-accent"><Send size={16} /></button>
         </form>
       </div>
     </div>
@@ -119,8 +114,8 @@ export const FloatingChatWidget: React.FC = () => {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {isOpen && <div className="mb-4"><ChatWindow onClose={() => setIsOpen(false)} /></div>}
-      <button onClick={() => setIsOpen(!isOpen)} className={`flex items-center gap-2 px-5 py-3 rounded-full shadow-lg ${isOpen ? 'bg-charcoal-800 text-cream' : 'bg-champagne-400 text-white'}`}>
-        {isOpen ? <X size={24} /> : <Sparkles size={24} />} {!isOpen && <span className="font-bold text-sm">Ask Twinkle</span>}
+      <button onClick={() => setIsOpen(!isOpen)} className={`flex items-center justify-center w-12 h-12 shadow-xl transition-all duration-300 ${isOpen ? 'bg-zinc-800 text-white rotate-45' : 'bg-primary text-white hover:bg-accent'}`}>
+        {isOpen ? <X size={20} /> : <Sparkles size={20} />}
       </button>
     </div>
   );
